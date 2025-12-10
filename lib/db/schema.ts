@@ -219,4 +219,7 @@ export const accountRelations = relations(account, ({ one }) => ({
   
     isDeleted: boolean("is_deleted").notNull().default(false),
   });
+    
+
+
   
