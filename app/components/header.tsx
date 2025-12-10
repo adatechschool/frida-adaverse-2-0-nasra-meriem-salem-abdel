@@ -3,7 +3,7 @@
 export const Header = () => {
     return (
         <header>
-            <h1>AdaMarket</h1>
+            <h1>AdaMarket marketplace</h1>
         </header>
     )
 }
