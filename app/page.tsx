@@ -1,6 +1,5 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { Header } from "./components/header";
 
 export default async function Home() {
     const session = await auth.api.getSession({ headers: await headers() });
@@ -8,9 +7,8 @@ export default async function Home() {
   return (
     <div>
       <pre>
-        {/* {session ? JSON.stringify(session.user, null, 2) : "Not connected"} */}
+        {session ? JSON.stringify(session.user, null, 2) : "Not connected"}
       </pre>
-      <Header></Header>
     </div>
   );
 }
