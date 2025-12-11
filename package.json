@@ -12,13 +12,13 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:seed": "tsx lib/seed.ts"
-
   },
   "dependencies": {
     "@neondatabase/serverless": "^1.0.2",
     "better-auth": "^1.4.5",
     "dotenv": "^17.2.3",
     "drizzle-orm": "^0.45.0",
+    "lucide-react": "^0.559.0",
     "next": "16.0.7",
     "react": "19.2.0",
     "react-dom": "19.2.0"
