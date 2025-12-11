@@ -15,6 +15,7 @@ export const signup = async (formData: FormData) => {
  email,
  password,
  },
+ headers: await headers(),
  asResponse: true,
  });
  if (!response.ok) {
@@ -35,6 +36,7 @@ export const signin = async (formData: FormData) => {
  email,
  password,
  },
+ headers: await headers(),
  asResponse: true,
 });
 if (!response.ok) {
