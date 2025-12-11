@@ -18,7 +18,7 @@ type CategoriesProps= {
 export const Categories =  ({categories, products}:CategoriesProps) => {
 
     return (
-        <section className="mb-8  border-zinc-700 pb-4">
+      <section className="mb-8  border-zinc-700 pb-4">
         <h2 className="mb-10 text-xl font-semibold">
           Catégories
         </h2>

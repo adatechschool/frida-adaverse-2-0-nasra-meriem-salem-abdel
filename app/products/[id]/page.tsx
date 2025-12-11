@@ -1,4 +1,4 @@
-import { getProductsBySlug } from "@/lib/queries";
+import { getProductsById } from "@/lib/queries";
 
 
 type ProductPageParams = {
@@ -12,7 +12,7 @@ interface ProductsPageProps {
 export default async function ProductsPage({ params }: ProductsPageProps) {
   
   const { id } = await params;
-  const product = await getProductsBySlug(id);
+  const product = await getProductsById(id);
 
   if (!product) {
     return (
