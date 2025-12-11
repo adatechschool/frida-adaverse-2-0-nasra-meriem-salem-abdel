@@ -15,3 +15,12 @@ export const getAllCategorie = async () => {
     
     return CategorieDb;
 }
+
+
+export const getProductsBySlug = async (id:number)=> {
+  const result = await db.select()
+  .from(products)
+  .where(eq(products.id, id))
+
+  return result[0] ?? null  // sois le 1er sauf si y a rien dcp ce sera nul
+}
