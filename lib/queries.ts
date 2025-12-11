@@ -14,5 +14,4 @@ export const getAllCategorie = async () => {
   const CategorieDb = await db.select().from(categories)
     
     return CategorieDb;
-    
 }
