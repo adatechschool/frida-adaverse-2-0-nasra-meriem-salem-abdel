@@ -5,6 +5,7 @@ import { Header } from "./components/header";
 import { getAllCategorie, getAllProducts } from "@/lib/queries";
 
 
+
 export default async function Home() {
     const session = await auth.api.getSession({ headers: await headers() });
 
@@ -14,7 +15,7 @@ export default async function Home() {
   return (
     <div>
       <Header></Header>
-    
+      
       {allCategorie.map((categorie)=>( <li key={categorie.id}>
         {categorie.name}
       </li> ))}
