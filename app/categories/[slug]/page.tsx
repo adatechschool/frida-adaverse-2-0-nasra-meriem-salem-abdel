@@ -1,30 +1,35 @@
-import { db } from "@/lib/db/drizzle";
-import {categories} from "@/lib/db/schema"
-import { eq} from "drizzle-orm"
+import Link from "next/link";
+import { getCategorieBySlug, getProductsByCategorySlug } from "@/lib/queries";
 
+type PageParams = { slug: string };
+type PageProps = { params: Promise<PageParams> };
 
-export default async function CategoriesSlug({
-    params,
-}:{
-    params : Promise <{slug: string}>
-}) {
-    
-    const {slug} = await params
-    
-    
-    const [categorie] = await  db
-    .select()
-    .from(categories)
-    .where(eq(categories.slug, slug))
+export default async function CategoriesSlug({ params }: PageProps) {
+  const { slug } = await params;
+  const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
 
-    if (!categorie){
-        return ("Cherche mieux ta catégorie ! allez éloigne moi ")
-    }
-    return (
-        <main>
-<h1> {categorie.name} </h1>
-<p> Description : {categorie.description}</p>
+  const categorie = await getCategorieBySlug(normalizedSlug);
 
-</main>
-    ) 
+  if (!categorie) {
+    return <main>Catégorie introuvable</main>;
+  }
+
+  const produits = await getProductsByCategorySlug(normalizedSlug);
+
+  return (
+    <main>
+      <h1>{categorie.name}</h1>
+      <p>Description : {categorie.description}</p>
+
+      <ul>
+        {produits.map((p) => (
+          <li key={p.id}>
+            <Link href={`/products/${p.id}`}>
+              {p.title} – {p.priceCents / 100} €
+            </Link>
+          </li>
+        ))}
+      </ul>
+    </main>
+  );
 }
