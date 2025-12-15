@@ -14,5 +14,13 @@ export const getAllCategorie = async () => {
   const CategorieDb = await db.select().from(categories)
     
     return CategorieDb;
-    
+}
+
+
+export const getProductsById = async (id:number)=> {
+  const result = await db.select()
+  .from(products)
+  .where(eq(products.id, id))
+
+  return result[0]   
 }
