@@ -30,7 +30,7 @@ export const Header = async () => {
               Mon compte
             </Link>
 
-            <form action={signout} method="post">
+            <form action={signout} >
               <button className="font-semibold">
                 Déconnexion
               </button>
