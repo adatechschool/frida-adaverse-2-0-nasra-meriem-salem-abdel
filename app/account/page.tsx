@@ -1,37 +1,21 @@
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { auth } from "@/lib/auth";
+import AccountClient from "./AccountClient";
+import { getAllCategorie, getProductsByOwnerId } from "@/lib/queries";
 
-type Session = Awaited<ReturnType<typeof auth.api.getSession>>;
+
 
 export default async function AccountPage() {
-  const session: Session = await auth.api.getSession({
-    headers: await headers(),
-  });
-
+  const session = await auth.api.getSession({ headers: await headers() });
   if (!session) redirect("/auth/sign-in");
+
+  const categories = await getAllCategorie()
+  const myProducts = await getProductsByOwnerId(session.user.id)
 
   return (
     <main>
-      <h1>Mon compte</h1>
-
-      <ul>
-        <li>
-          <b>User ID :</b> {session.user.id}
-        </li>
-
-        {"email" in session.user && session.user.email && (
-          <>
-            <li>
-              <b>Email :</b> {String(session.user.email)}
-            </li>
-
-            <li>
-              <b>Nom :</b> {String(session.user.name)}
-            </li>
-          </>
-        )}
-      </ul>
+      <AccountClient user={session.user} categories={categories} products={myProducts} />
     </main>
   );
 }

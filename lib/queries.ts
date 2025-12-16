@@ -55,3 +55,27 @@ export const getCategorieBySlug = async(slug:string)=>{
 
   return result[0]; // ✅ une seule catégorie
 }
+
+
+
+export const getProductsByOwnerId = async (ownerId: string) => {
+  const result = await db
+    .select({
+      id: products.id,
+      title: products.title,
+      slug: products.slug,
+      description: products.description,
+      priceCents: products.priceCents,
+      imageUrl: products.imageUrl,
+      isPublished: products.isPublished,
+      createdAt: products.createdAt,
+      updatedAt: products.updatedAt,
+      categoryId: products.categoryId,
+      categoryName: categories.name, 
+    })
+    .from(products)
+    .innerJoin(categories, eq(products.categoryId, categories.id))
+    .where(eq(products.ownerId, ownerId));
+
+  return result;
+};
