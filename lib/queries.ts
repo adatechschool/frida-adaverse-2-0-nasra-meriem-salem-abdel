@@ -51,7 +51,6 @@ export const getCategorieBySlug = async(slug:string)=>{
   const result = await db
     .select()
     .from(categories)
-    .where(ilike(categories.slug, slug)); // ✅ comme ton getProductsByCategorySlug
-
-  return result[0]; // ✅ une seule catégorie
+    .where(ilike(categories.slug, slug)); 
+  return result[0]; 
 }
