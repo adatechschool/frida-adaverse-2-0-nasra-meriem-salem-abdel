@@ -7,7 +7,7 @@ export const signup = async (formData: FormData) => {
     const name = formData.get("name") as string;
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    if (!name && !email && !password) {
+    if (!name || !email || !password) {
         throw Error("Name, email and password are required");
     }
     const response = await auth.api.signUpEmail({
@@ -20,8 +20,9 @@ export const signup = async (formData: FormData) => {
         asResponse: true,
     });
     if (!response.ok) {
-        console.error("Sign in failed:", await response.json());
-        redirect("/auth/signup?error=true");
+        const body = await response.json().catch(() => null);
+        console.error("Sign up failed:", { status: response.status, body });
+        redirect("/auth/sign-up?error=true");
     }
     redirect("/"); // on redirige vers la home page une fois connecté
 };
@@ -29,7 +30,7 @@ export const signup = async (formData: FormData) => {
 export const signin = async (formData: FormData) => {
     const email = formData.get("email") as string;
     const password = formData.get("password") as string;
-    if (!email && !password) {
+    if (!email || !password) {
         throw Error("email and password are required");
     }
     const response = await auth.api.signInEmail({
@@ -41,8 +42,9 @@ export const signin = async (formData: FormData) => {
         asResponse: true,
     });
     if (!response.ok) {
-        console.error("Sign in failed:", await response.json());
-        redirect("/auth/signin?error=true");
+        const body = await response.json().catch(() => null);
+        console.error("Sign in failed:", { status: response.status, body });
+        redirect("/auth/sign-in?error=true");
     }
     redirect("/"); // on redirige vers la home page une fois connecté
 };
