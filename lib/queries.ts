@@ -1,7 +1,9 @@
 import {db} from "@/lib/db/drizzle";
-import { categories,products,comments } from "./db/schema";
+import { categories,products,comments} from "./db/schema";
+import {users} from "@/auth-schema";
 
-import { eq, ilike } from "drizzle-orm";
+import { eq, ilike , and, desc} from "drizzle-orm";
+
 
 export const getAllProducts = async () => {
   const ProductDb = await db.select().from(products)
@@ -24,9 +26,6 @@ export const getProductsById = async (id:number)=> {
 
   return result[0]   
 }
-
-
-
 
 export const getProductsByCategorySlug = async (slug: string) => {
   const result = await db
@@ -56,6 +55,29 @@ export const getCategorieBySlug = async(slug:string)=>{
   return result[0]; // ✅ une seule catégorie
 }
 
+export const getComment = async (productId:number)=>{
+    const  result = await db.select({
+    id: comments.id,
+    content: comments.content,
+    authorId: comments.authorId,
+    updatedAt: comments.updatedAt,
+    createdAt: comments.createdAt,
+    authorName: users.name,
+  
+  })
+  .from(comments)
+  .leftJoin(users,eq(comments.authorId,users.id))
+  .where(
+    and(
+      eq(comments.productId, productId),
+       eq(comments.isDeleted, false)
+      )
+    )
+  .orderBy(desc(comments.createdAt))
+
+
+  return result 
+}
 
 
 export const getProductsByOwnerId = async (ownerId: string) => {
