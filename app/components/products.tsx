@@ -1,38 +1,39 @@
 "use client";
 
-import { useEffect, useState } from "react";
-import Link from "next/link";
+import React, { useState, useEffect } from "react";
 import Fav from "../components/Fav";
 
 type Product = {
   id: number;
   title: string;
   slug: string;
-  description?: string;
-  price_cents: number;
-  image_url?: string;
+  description?: string | null;
+  price_cents?: number;
+  priceCents?: number;
+  image_url?: string | null;
+  imageUrl?: string | null;
 };
 
-export default function Products() {
-  const [products, setProducts] = useState<Product[]>([]);
-  const [favorites, setFavorites] = useState<number[]>([]);
+type ProductsProps = {
+  products: Product[];
+};
 
-  
-  useEffect(() => {
-    fetch("/api/products")
-      .then(res => res.json())
-      .then(setProducts);
-  }, []);
+export default function Products({ products }: ProductsProps) {
+  const [favorites, setFavorites] = useState<number[]>(() => {
+    if (typeof window === "undefined") return [];
+    try {
+      
+      const stored = localStorage.getItem("favorites");
+      return stored ? JSON.parse(stored).map((v: any) => Number(v)) : [];
+    } catch {
+      return [];
+    }
+  });
 
-  // Charger favoris depuis localStorage
-  useEffect(() => {
-    const stored = localStorage.getItem("favorites");
-    if (stored) setFavorites(JSON.parse(stored));
-  }, []);
-
-  // Sauvegarder favoris à chaque changement
   useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
+    
+    window.dispatchEvent(new CustomEvent("favorites-updated", { detail: favorites }));
   }, [favorites]);
 
   const toggleFavorite = (id: number) => {
@@ -45,8 +46,7 @@ export default function Products() {
     <div className="space-y-6">
       {products.map(product => (
         <div key={product.id} className="relative border p-4 rounded-md">
-          {/* Bouton favori */}
-          <div className="absolute top-2 right-2">
+          <div className="absolute top-2 right-2 z-10"> 
             <Fav
               id={product.id}
               isLiked={favorites.includes(product.id)}
@@ -54,12 +54,11 @@ export default function Products() {
             />
           </div>
 
-          <Link href={`/products/${product.id}`}>
-            <h2 className="text-lg font-semibold">{product.title}</h2>
-          </Link>
-
+          <h2 className="text-lg font-semibold">{product.title}</h2>
           <p>{product.description}</p>
-          <p className="font-bold">{(product.price_cents / 100).toFixed(2)} €</p>
+          <p className="font-bold">
+            {(((product.price_cents ?? product.priceCents) || 0) / 100).toFixed(2)} €
+          </p>
         </div>
       ))}
     </div>
