@@ -3,7 +3,7 @@
 import "dotenv/config"
 import { db } from "@/lib/db/drizzle";
 import {  categories, products, comments } from "@/lib/db/schema";
-import { users } from "@/auth-schema";
+import { users } from "@/lib/db/auth-schema";
 import { eq } from "drizzle-orm";
 
 // petit helper pour les slugs

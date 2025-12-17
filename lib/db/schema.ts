@@ -14,6 +14,8 @@ import {
 //
 // categories
 //
+
+
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
 

@@ -1,9 +1,7 @@
 import {db} from "@/lib/db/drizzle";
-import { categories,products,comments} from "./db/schema";
-import {users} from "@/auth-schema";
-
-import { eq, ilike , and, desc} from "drizzle-orm";
-
+import { categories,products,comments} from "./db/schema"
+import {users} from "./db/auth-schema"
+import { eq, ilike, and,desc } from "drizzle-orm";
 
 export const getAllProducts = async () => {
   const ProductDb = await db.select().from(products)
@@ -19,13 +17,31 @@ export const getAllCategorie = async () => {
 }
 
 
-export const getProductsById = async (id:number)=> {
-  const result = await db.select()
-  .from(products)
-  .where(eq(products.id, id))
 
-  return result[0]   
-}
+export const getProductsById = async (id: number) => {
+  const result = await db
+    .select({
+      id: products.id,
+      title: products.title,
+      slug: products.slug,
+      description: products.description,
+      priceCents: products.priceCents,
+      imageUrl: products.imageUrl,
+      isPublished: products.isPublished,
+      ownerId: products.ownerId,
+      sellerName: users.name,
+      categoryName: categories.name,
+    })
+    .from(products)
+    .innerJoin(users, eq(products.ownerId, users.id))         
+    .innerJoin(categories, eq(products.categoryId, categories.id)) 
+    .where(eq(products.id, id));
+
+  return result[0];
+};
+
+
+
 
 export const getProductsByCategorySlug = async (slug: string) => {
   const result = await db

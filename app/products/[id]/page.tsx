@@ -43,7 +43,7 @@ const connectedUserId = session?.user?.id ?? null;
         Prix :{product.priceCents / 100}
       </p>
       <p className="text-lg font-semibold">
-        Vendeur : {product.ownerId}
+        Vendeur : {product.sellerName}
       </p>
       <section className="mt-8">
         <h2 className="mb-4 text-xl font-bold">Commentaires</h2>
