@@ -1,10 +1,6 @@
 import {db} from "@/lib/db/drizzle";
-import { categories,products,comments} from "./db/schema";
-import {users} from "@/auth-schema";
-import { favorites } from "@/lib/db/schema";
-import { eq, ilike , and, desc} from "drizzle-orm";
+import { favorites,categories,products,comments} from "./db/schema";
 
-import { categories,products,comments} from "./db/schema"
 import {users} from "./db/auth-schema"
 import { eq, ilike, and,desc } from "drizzle-orm";
 

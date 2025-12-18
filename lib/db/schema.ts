@@ -1,5 +1,5 @@
 
-
+import { users } from "./auth-schema";
 import {
   pgTable,
   text,
@@ -10,7 +10,7 @@ import {
   integer,
   primaryKey,
 } from "drizzle-orm/pg-core";
-import { users } from "@/auth-schema";
+
 
 
 //
