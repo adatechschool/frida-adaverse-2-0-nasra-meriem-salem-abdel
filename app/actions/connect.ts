@@ -1,51 +1,122 @@
 "use server";
+
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { redirect } from "next/navigation";
+import { signUpSchema, signInSchema } from "@/lib/validation/auth";
+import { z } from "zod";
 
-export const signup = async (formData: FormData) => {
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    if (!name && !email && !password) {
-        throw Error("Name, email and password are required");
-    }
-    const response = await auth.api.signUpEmail({
-        body: {
-            name,
-            email,
-            password,
-        },
-        headers: await headers(),
-        asResponse: true,
-    });
-    if (!response.ok) {
-        console.error("Sign in failed:", await response.json());
-        redirect("/auth/signup?error=true");
-    }
-    redirect("/"); // on redirige vers la home page une fois connecté
+export type ActionErrors = {
+  name?: string;
+  email?: string;
+  password?: string;
+  form?: string;
 };
 
-export const signin = async (formData: FormData) => {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    if (!email && !password) {
-        throw Error("email and password are required");
-    }
-    const response = await auth.api.signInEmail({
-        body: {
-            email,
-            password,
-        },
-        headers: await headers(),
-        asResponse: true,
-    });
-    if (!response.ok) {
-        console.error("Sign in failed:", await response.json());
-        redirect("/auth/signin?error=true");
-    }
-    redirect("/"); // on redirige vers la home page une fois connecté
+export type ActionResult = {
+  ok: boolean;
+  errors: ActionErrors;
 };
-export const signout = async () => {
-    await auth.api.signOut({ headers: await headers() }); // attention à
+
+export const signup = async (
+  _oldState: ActionResult | null,
+  formData: FormData
+): Promise<ActionResult> => {
+
+  const parsed = signUpSchema.safeParse({
+    name: formData.get("name"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!parsed.success) {
+    const tree = z.treeifyError(parsed.error);
+    return {
+      ok: false,
+      errors: {
+        name: tree.properties?.name?.errors?.[0],
+        email: tree.properties?.email?.errors?.[0],
+        password: tree.properties?.password?.errors?.[0],
+      },
+    };
+  }
+
+  try {
+    const res = await auth.api.signUpEmail({
+      body: parsed.data,
+      headers: await headers(),
+      asResponse: true,
+    });
+
+    if (!res.ok) {
+      return {
+        ok: false,
+        errors: { email: "Un compte existe déjà avec cet email" },
+      };
+    }
+
+    return { ok: true, errors: {} };
+
+  } catch {
+    return {
+      ok: false,
+      errors: { form: "Une erreur est survenue, réessaie" },
+    };
+  }
+};
+
+export const signin = async (
+  _oldState: ActionResult | null,
+  formData: FormData
+): Promise<ActionResult> => {
+
+  const parsed = signInSchema.safeParse({
+    email: formData.get("email"),
+    password: formData.get("password"),
+  });
+
+  if (!parsed.success) {
+    const tree = z.treeifyError(parsed.error);
+    return {
+      ok: false,
+      errors: {
+        email: tree.properties?.email?.errors?.[0],
+        password: tree.properties?.password?.errors?.[0],
+      },
+    };
+  }
+
+  try {
+    const res = await auth.api.signInEmail({
+      body: parsed.data,
+      headers: await headers(),
+      asResponse: true,
+    });
+
+    if (!res.ok) {
+      return {
+        ok: false,
+        errors: { form: "Email ou mot de passe incorrect" },
+      };
+    }
+
+    return { ok: true, errors: {} };
+
+  } catch {
+    return {
+      ok: false,
+      errors: { form: "Erreur lors de la connexion" },
+    };
+  }
+};
+
+export const signout = async (): Promise<ActionResult> => {
+  try {
+    await auth.api.signOut({ headers: await headers() });
+    return { ok: true, errors: {} };
+  } catch {
+    return {
+      ok: false,
+      errors: { form: "Impossible de se déconnecter" },
+    };
+  }
 };
