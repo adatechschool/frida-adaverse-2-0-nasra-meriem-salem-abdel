@@ -16,6 +16,8 @@ import { users } from "@/auth-schema";
 //
 // categories
 //
+
+
 export const categories = pgTable("categories", {
   id: serial("id").primaryKey(),
 

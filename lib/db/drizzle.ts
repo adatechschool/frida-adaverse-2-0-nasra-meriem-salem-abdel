@@ -4,7 +4,7 @@ import { drizzle } from "drizzle-orm/neon-http";
 import { neon } from "@neondatabase/serverless";
 
 import * as appSchema from "./schema";
-import * as authSchema from "../../auth-schema"; // chemin depuis lib/db
+import * as authSchema from "./auth-schema"; // chemin depuis lib/db
 
 const client = neon(process.env.DATABASE_URL!);
 
