@@ -1,32 +1,30 @@
-import Link from "next/link";
 import { getCategorieBySlug, getProductsByCategorySlug } from "@/lib/queries";
+import ProductCard from "@/app/components/ProductCardSlug";
 
-type PageParams = { slug: string };
-type PageProps = { params: Promise<PageParams> };
+type PageProps = {
+  params: { slug: string };
+};
 
 export default async function CategoriesSlug({ params }: PageProps) {
-  const { slug } = await params;
+  const {slug} = await params
   const normalizedSlug = decodeURIComponent(slug).trim().toLowerCase();
 
   const categorie = await getCategorieBySlug(normalizedSlug);
-
-  if (!categorie) {
-    return <main>Catégorie introuvable</main>;
-  }
+  if (!categorie) return <main>Catégorie introuvable</main>;
 
   const produits = await getProductsByCategorySlug(normalizedSlug);
 
   return (
-    <main>
-      <h1>{categorie.name}</h1>
-      <p>Description : {categorie.description}</p>
-
-      <ul>
+    <main className="mx-auto max-w-6xl px-4 py-10">
+      <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {produits.map((p) => (
           <li key={p.id}>
-            <Link href={`/products/${p.id}`}>
-              {p.title} – {p.priceCents / 100} €
-            </Link>
+            <ProductCard
+              id={p.id}
+              title={p.title}
+              priceCents={p.priceCents}
+              imageUrl={p.imageUrl}
+            />
           </li>
         ))}
       </ul>

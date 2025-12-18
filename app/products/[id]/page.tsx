@@ -4,10 +4,12 @@ import { headers } from "next/headers";
 import { getProductsById, getComment } from "@/lib/queries";
 import CommentsForm from "@/app/components/CommentsForm";
 import CommentsProduct from "@/app/components/CommentsProduct";
+import ProductImage from "@/app/components/ProductImage";
+
 import Favclient from "@/app/components/FavClient";
 
 type ProductPageParams = {
-  id: number;
+  id: string;
 };
 
 interface ProductsPageProps {
@@ -15,10 +17,13 @@ interface ProductsPageProps {
 }
 
 export default async function ProductsPage({ params }: ProductsPageProps) {
-  const { id } = await params;
+  const { id } = await params
 
-  const product = await getProductsById(id);
-  const comments = await getComment(id);
+  const productId = Number(id)
+
+
+  const product = await getProductsById(productId);
+  const comments = await getComment(productId);
 
   if (!product) {
     return (
@@ -37,6 +42,10 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
       <h1 className="mb-4 text-2xl font-bold">{product.title}</h1>
+      {product.imageUrl && (
+        <ProductImage publicId={product.imageUrl} alt={product.title} />
+      )}
+
 
       {/* ❤️ FAVORI */}
 {connectedUserId ? (
@@ -58,7 +67,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
       <section className="mt-8">
         <h2 className="mb-4 text-xl font-bold">Commentaires</h2>
 
-        <CommentsForm productId={id} />
+        <CommentsForm productId={productId} />
 
         {comments.length === 0 && (
           <p>Aucun commentaire pour ce produit</p>
