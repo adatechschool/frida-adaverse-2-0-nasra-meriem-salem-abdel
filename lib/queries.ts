@@ -1,7 +1,7 @@
 import {db} from "@/lib/db/drizzle";
 import { categories,products,comments} from "./db/schema";
 import {users} from "@/auth-schema";
-
+import { favorites } from "@/lib/db/schema";
 import { eq, ilike , and, desc} from "drizzle-orm";
 
 
@@ -101,3 +101,50 @@ export const getProductsByOwnerId = async (ownerId: string) => {
 
   return result;
 };
+
+export const addFavorite = async (userId: string, productId: number) => {
+  await db.insert(favorites).values({
+    userId,
+    productId,
+  });
+};
+
+export const removeFavorite = async (userId: string, productId: number) => {
+  await db
+    .delete(favorites)
+    .where(
+      and(
+        eq(favorites.userId, userId),
+        eq(favorites.productId, productId)
+      )
+    );
+};
+export const isFavorite = async (userId: string, productId: number) => {
+  const result = await db
+    .select()
+    .from(favorites)
+    .where(
+      and(
+        eq(favorites.userId, userId),
+        eq(favorites.productId, productId)
+      )
+    );
+
+  return result.length > 0;
+};
+
+export const getFavoritesByUser = async (userId: string) => {
+  const result = await db
+    .select({
+      id: products.id,
+      title: products.title,
+      priceCents: products.priceCents,
+      imageUrl: products.imageUrl,
+    })
+    .from(favorites)
+    .innerJoin(products, eq(favorites.productId, products.id))
+    .where(eq(favorites.userId, userId));
+
+  return result;
+};
+

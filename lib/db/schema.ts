@@ -1,4 +1,4 @@
-// lib/db/schema.ts
+
 
 import {
   pgTable,
@@ -8,7 +8,9 @@ import {
   serial,
   varchar,
   integer,
+  primaryKey,
 } from "drizzle-orm/pg-core";
+import { users } from "@/auth-schema";
 
 
 //
@@ -81,3 +83,24 @@ export const comments = pgTable("comments", {
 
   isDeleted: boolean("is_deleted").notNull().default(false),
 });
+
+// favorites
+export const favorites = pgTable(
+  "favorites",
+  {
+    userId: text("user_id")
+      .notNull()
+      .references(() => users.id, { onDelete: "cascade" }),
+
+    productId: integer("product_id")
+      .notNull()
+      .references(() => products.id, { onDelete: "cascade" }),
+
+    createdAt: timestamp("created_at", { withTimezone: true })
+      .notNull()
+      .defaultNow(),
+  },
+  (table) => ({
+    pk: primaryKey({ columns: [table.userId, table.productId] }),
+  })
+);

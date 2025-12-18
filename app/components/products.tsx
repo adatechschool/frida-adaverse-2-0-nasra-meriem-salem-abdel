@@ -22,7 +22,6 @@ export default function Products({ products }: ProductsProps) {
   const [favorites, setFavorites] = useState<number[]>(() => {
     if (typeof window === "undefined") return [];
     try {
-      
       const stored = localStorage.getItem("favorites");
       return stored ? JSON.parse(stored).map((v: any) => Number(v)) : [];
     } catch {
@@ -32,7 +31,6 @@ export default function Products({ products }: ProductsProps) {
 
   useEffect(() => {
     localStorage.setItem("favorites", JSON.stringify(favorites));
-    
     window.dispatchEvent(new CustomEvent("favorites-updated", { detail: favorites }));
   }, [favorites]);
 
@@ -46,14 +44,13 @@ export default function Products({ products }: ProductsProps) {
     <div className="space-y-6">
       {products.map(product => (
         <div key={product.id} className="relative border p-4 rounded-md">
-          <div className="absolute top-2 right-2 z-10"> 
+          <div className="absolute top-2 right-2">
             <Fav
               id={product.id}
               isLiked={favorites.includes(product.id)}
               onToggleLike={() => toggleFavorite(product.id)}
             />
           </div>
-
           <h2 className="text-lg font-semibold">{product.title}</h2>
           <p>{product.description}</p>
           <p className="font-bold">

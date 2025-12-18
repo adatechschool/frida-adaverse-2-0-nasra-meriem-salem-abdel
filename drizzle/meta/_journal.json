@@ -22,6 +22,13 @@
       "when": 1765374364931,
       "tag": "0002_friendly_agent_zero",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1766017421721,
+      "tag": "0003_sweet_domino",
+      "breakpoints": true
     }
   ]
 }
