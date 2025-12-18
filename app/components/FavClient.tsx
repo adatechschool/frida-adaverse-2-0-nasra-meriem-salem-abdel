@@ -54,9 +54,7 @@ export default function FavClient({ productId, userId, productName, productSlug 
 
   return (
     <div className="flex items-center justify-between gap-3 rounded border p-3">
-      <Link href={`/products/${productSlug}`} className="flex-1">
         <p className="font-semibold">{productName}</p>
-      </Link>
       <Fav id={productId} isLiked={isLiked} onToggleLike={toggleLike} disabled={loading} />
     </div>
   );
