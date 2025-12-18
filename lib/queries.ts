@@ -1,6 +1,5 @@
 import {db} from "@/lib/db/drizzle";
 import { favorites,categories,products,comments} from "./db/schema";
-
 import {users} from "./db/auth-schema"
 import { eq, ilike, and,desc } from "drizzle-orm";
 

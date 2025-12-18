@@ -7,6 +7,7 @@ import Link from "next/link";
 import { updateName } from "../actions/updateName";
 import { updateEmail } from "../actions/updateEmail";
 import { deleteProduct } from "../actions/deleteProduct";
+import FavClient from "@/app/components/FavClient";
 
 type Category = {
   id: number;
@@ -28,16 +29,48 @@ type Products = {
   categoryName: string;
 };
 
-export default function AccountClient({ user, categories, products }: { user: any; categories: Category[]; products: Products[] }) {
+export default function AccountClient({
+  user,
+  categories,
+ products = [],
+
+}: {
+  user: any;
+  categories: Category[];
+  products: Products[];
+  favorites?: Products[];
+}) {
   const [showForm, setShowForm] = useState(false);
   const [showNameForm, setShowNameForm] = useState(false);
   const [showEmail, setShowEmail] = useState(false);
   const [emailState, emailAction] = useActionState(updateEmail, null);
+  const [favorites, setFavorites] = useState<Products[]>([]);
+  const [loadingFavorites, setLoadingFavorites] = useState(true);
+
 
   useEffect(() => {
     if (emailState?.ok === true) setShowEmail(false);
   }, [emailState]);
 
+     useEffect(() => {
+    if (!user?.id) return;
+
+    const fetchFavorites = async () => {
+      try {
+        const res = await fetch(`/api/favorites?userId=${user.id}`);
+        if (!res.ok) throw new Error("Erreur r├®cup├®ration favoris");
+        const data: Products[] = await res.json();
+        setFavorites(data);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoadingFavorites(false);
+      }
+    };
+
+    fetchFavorites();
+  }, [user]);
+ 
   return (
     <section className="mx-auto w-full max-w-lg px-4 py-8 sm:max-w-2xl sm:px-6 sm:py-12 lg:max-w-4xl lg:px-8">
       {/* Infos utilisateur */}
@@ -139,44 +172,68 @@ export default function AccountClient({ user, categories, products }: { user: an
             </div>
 
             <ProductForm categories={categories} />
-
-            {/* Liste produits */}
-            <div className="mt-6 space-y-4">
-              {products.length === 0 ? (
-                <p className="text-sm text-black">Tu n’as pas encore ajouté de produit.</p>
-              ) : (
-                products.map((product) => (
-                  <div
-                    key={product.id}
-                    className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
-                  >
-                    <div className="flex items-start gap-3">
-                      <Link href={`/products/${product.id}`} className="flex-1">
-                        <p className="text-base font-semibold">{product.title}</p>
-                        {product.description && (
-                          <p className="mt-1 text-sm text-black">{product.description}</p>
-                        )}
-                        <p className="mt-2 text-sm font-medium">
-                          {(product.priceCents / 100).toFixed(2)} €
-                        </p>
-                      </Link>
-
-                      <form action={deleteProduct} className="ml-auto">
-                        <input type="hidden" name="productId" value={product.id} />
-                        <button className="bg-red-500 hover:bg-red-700 cursor-pointer px-3 py-2 rounded-xl text-white">
-                          Supprimer
-                        </button>
-                      </form>
-                    </div>
-
-                    <div className="mt-3 text-xs text-black">Catégorie: {product.categoryName}</div>
-                  </div>
-                ))
-              )}
-            </div>
           </div>
         </div>
       )}
+
+      {/* Liste produits */}
+      <div className="mt-6 space-y-4">
+        {(products || []).length === 0 ? (
+          <p className="text-sm text-black">Tu n’as pas encore ajouté de produit.</p>
+        ) : (
+          (products || []).map((product) => (
+            <div
+              key={product.id}
+              className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4"
+            >
+              <div className="flex-1">
+                <Link href={`/products/${product.slug}`} className="block">
+                  <p className="text-base font-semibold">{product.title}</p>
+                  {product.description && (
+                    <p className="mt-1 text-sm text-black">{product.description}</p>
+                  )}
+                  <p className="mt-2 text-sm font-medium">
+                    {(product.priceCents / 100).toFixed(2)} €
+                  </p>
+                </Link>
+                <div className="mt-1 text-xs text-black">Catégorie: {product.categoryName}</div>
+              </div>
+
+              <form action={deleteProduct}>
+                <input type="hidden" name="productId" value={product.id} />
+                <button className="bg-red-500 hover:bg-red-700 cursor-pointer px-3 py-2 rounded-xl text-white">
+                  Supprimer
+                </button>
+              </form>
+            </div>
+          ))
+        )}
+      </div>
+
+      {/* Mes favoris */}
+      <div className="mt-8">
+        <h2 className="text-lg font-semibold">Mes favoris</h2>
+        {(favorites || []).length === 0 ? (
+          <p>Aucun produit en favori</p>
+        ) : (
+          (favorites || []).map((product) => (
+            <div
+              key={product.id}
+              className="flex items-center justify-between rounded-xl border p-4"
+            >
+              <Link href={`/products/${product.id}`}>
+                <p className="font-medium">{product.title}</p>
+              </Link>
+              <FavClient
+                productId={product.id}
+                userId={user.id}
+                productName={product.title}
+                productSlug={product.slug}
+              />
+            </div>
+          ))
+        )}
+      </div>
     </section>
   );
 }

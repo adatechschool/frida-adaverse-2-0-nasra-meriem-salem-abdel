@@ -26,7 +26,7 @@ export default async function AccountPage() {
 
   return (
     <main>
-      <AccountClient user={session.user} categories={categories} products={myProducts} />
+      <AccountClient user={session.user} categories={categories} products={myProducts}  />
     </main>
   );
 }

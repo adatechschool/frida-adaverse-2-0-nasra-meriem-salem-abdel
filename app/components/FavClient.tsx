@@ -1,18 +1,21 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import Link from "next/link";
 import Fav from "./Fav";
 
 type FavClientProps = {
 
   productId: number;
   userId: string;
+  productName: string;
+  productSlug: string; // pour le lien
 };
 
-export default function FavClient({ productId, userId }: FavClientProps) {
+export default function FavClient({ productId, userId, productName, productSlug }: FavClientProps) {
   const [isLiked, setIsLiked] = useState(false);
   const [loading, setLoading] = useState(true);
-  
+
   useEffect(() => {
     const fetchFavorite = async () => {
       setLoading(true);
@@ -39,7 +42,7 @@ export default function FavClient({ productId, userId }: FavClientProps) {
       await fetch("/api/favorites", {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ userId, productId: productId }),
+        body: JSON.stringify({ userId, productId }),
       });
       setIsLiked(!isLiked);
     } catch (err) {
@@ -51,9 +54,9 @@ export default function FavClient({ productId, userId }: FavClientProps) {
 
   return (
     <div className="flex items-center justify-between gap-3 rounded border p-3">
-      {/* <Link href={`/products/${productId}`} className="flex-1">
-        <p className="font-semibold">{product.title}</p>
-      </Link> */}
+      <Link href={`/products/${productSlug}`} className="flex-1">
+        <p className="font-semibold">{productName}</p>
+      </Link>
       <Fav id={productId} isLiked={isLiked} onToggleLike={toggleLike} disabled={loading} />
     </div>
   );
