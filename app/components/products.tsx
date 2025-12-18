@@ -1,5 +1,7 @@
 import { getAllProducts } from "@/lib/queries";
 import Link from "next/link";
+import { CldImage } from "next-cloudinary";
+
 
 type Product = {
   id: number;
@@ -41,18 +43,28 @@ export const Products = async () => {
     <div className="space-y-6">
       {products.map((product) => (
         <div key={product.id} className="border p-4 rounded-md shadow-sm">
-          {product.image_url && (
-            <img
-              src={product.image_url}
-              alt={product.title}
-              className="w-full h-48 object-cover mb-4 rounded-md"
-            />
-          )}
+
+
+{product.image_url && (
+  <div className="mb-4 overflow-hidden rounded-md border">
+    <CldImage
+      src={product.image_url}   // public_id
+      width="800"
+      height="400"
+      alt={product.title}
+      className="h-48 w-full object-cover"
+    />
+  </div>
+)}
+
+
+
           <Link
-            href={`/products/${product.slug}`}
+            href={`/products/${product.id}`}
             className="text-xl font-semibold text-blue-600 hover:underline"
           >
             {product.title}
+            
           </Link>
           <p className="text-gray-700 mt-2">{product.description}</p>
           <p className="text-green-600 font-bold mt-1">

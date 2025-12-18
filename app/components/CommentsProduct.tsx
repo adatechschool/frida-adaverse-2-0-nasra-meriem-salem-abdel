@@ -8,9 +8,10 @@ interface Props {
   commentContent: string;
   authorId: string;
   connectedUserId: string | null;
+  productId: number,
 }
 
-export default function CommentProduct({ commentId,commentContent,authorId,connectedUserId,}: Props) {
+export default function CommentProduct({ commentId,commentContent,authorId,connectedUserId, productId}: Props) {
   const [isModif, setIsModif] = useState(false);
   const [content, setContent] = useState(commentContent);
 
@@ -18,13 +19,13 @@ export default function CommentProduct({ commentId,commentContent,authorId,conne
 
   const handleUpdate = async () => {
     if (!content.trim()) return;
-    await updateComment(commentId, content);
+    await updateComment(commentId, content, productId);
     setIsModif(false);
   };
 
   const handleDelete = async () => {
     if (!confirm("Supprimer ce commentaire ?")) return;
-    await deleteComment(commentId);
+    await deleteComment(commentId, productId);
     location.reload();
   };
   

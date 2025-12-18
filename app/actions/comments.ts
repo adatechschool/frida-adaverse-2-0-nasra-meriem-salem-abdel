@@ -6,6 +6,8 @@
  import { db } from "@/lib/db/drizzle" 
  import {comments} from "@/lib/db/schema"
  import {eq,and} from "drizzle-orm"
+ import { revalidatePath } from "next/cache";
+
 
 
   export const createComment = async(productId:number, content:string)=>{ 
@@ -21,11 +23,12 @@
         content, 
         authorId: session.user.id,
      }) 
-     
+     revalidatePath(`/products/${productId}`); 
+
 
     }
   
-    export const updateComment = async(commentId:number, content:string) =>{
+    export const updateComment = async(commentId:number, content:string, productId:number) =>{
       const session = await auth.api.getSession({
         headers: await headers(),
       })
@@ -42,10 +45,11 @@
       )
         .returning()
 
-     
+        revalidatePath(`/products/${productId}`); 
+
       }
 
-      export const deleteComment = async(commentId:number) =>{
+      export const deleteComment = async(commentId:number, productId:number) =>{
         const session = await auth.api.getSession({
           headers: await headers(),
         })
@@ -59,5 +63,5 @@
         eq(comments.authorId, session.user.id)
       )
     )
-  
+    revalidatePath(`/products/${productId}`); 
     }

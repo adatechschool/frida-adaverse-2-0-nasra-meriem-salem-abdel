@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { createComment} from "../actions/comments";
-
+import { useRouter } from "next/navigation"
 
 type CommentFormProps ={
     productId: number
@@ -10,15 +10,15 @@ type CommentFormProps ={
 }
 export default function CommentForm({ productId}: CommentFormProps) {
   const [content, setContent] = useState("");
-  
+  const router = useRouter()
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!content) return;
-   
 
-    await createComment( productId, content );
+    await createComment(productId, content );
     setContent("");
+    router.refresh()
   };
 
   return (
@@ -35,6 +35,7 @@ export default function CommentForm({ productId}: CommentFormProps) {
       </button>
     </form>
   );
+
 }
 
 

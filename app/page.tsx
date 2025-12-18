@@ -14,24 +14,17 @@ export default async function Home() {
     const allCategories = await getAllCategorie()
 
     const products = allProducts.map((item) => ({
-      id:item.id,
-      title:item.title,
-      slug:item.slug,
-      category_id:item.categoryId,
-    }))
+      id: item.id,
+      title: item.title,
+      slug: item.slug,
+      category_id: item.categoryId,
+      image_url: item.imageUrl, 
+    }));
+    
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 grid gap-8 md:grid-cols-[220px,1fr]">
       <Categories categories={allCategories} products={products}></Categories>
-    <section>
-    {session && (
-      <form action={signout}>
-        <button type="submit" className="bg-white text-black">
-          Logout
-        </button>
-      </form>
-    )}
-    </section>
   </main>
   );
 }
