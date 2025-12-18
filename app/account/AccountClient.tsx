@@ -6,10 +6,18 @@ import { updateName } from "../actions/updateName";
 import { updateEmail } from "../actions/updateEmail";
 import { useActionState, useEffect } from "react";
 import { deleteProduct } from "../actions/deleteProduct";
+import FavoriteToggleButton from "../components/FavoriteToggleBtn";
+
 
 type Category = {
     id:number,
     name: string,
+}
+
+type Favorite= {
+  id: number,
+  title:string,
+  priceCents:number,
 }
 
 type Products = {
@@ -26,11 +34,12 @@ type Products = {
     categoryName: string,
 }
 
-export default function AccountClient({ user,categories, products}: { user: any , categories: Category[], products:Products[]}) {
+export default function AccountClient({ user,categories, products, favorites}: { user: any , categories: Category[], products:Products[], favorites : Favorite[]}) {
   const [showForm, setShowForm] = useState(false)
   const [showNameForm, setShowNameForm] = useState(false)
   const [showEmail, setShowEmail] = useState(false)
   const [emailState, emailAction] = useActionState(updateEmail, null)
+  
 
   useEffect(() => {
     if (emailState?.ok === true) setShowEmail(false); // ok = boleean
@@ -131,7 +140,28 @@ export default function AccountClient({ user,categories, products}: { user: any 
                 <ProductForm categories={categories} />
                 </div>
             </div>
+            )}<div className="mt-8 space-y-4">
+            <h2 className="text-lg font-semibold">Mes favoris</h2>
+          
+            {favorites.length === 0 ? (
+              <p className="text-sm text-black">Tu n’as pas encore de favoris.</p>
+            ) : (
+              <div className="grid gap-4 sm:grid-cols-2">
+                {favorites.map((fav) => (
+  <div key={fav.id} className="...">
+    <Link href={`/products/${fav.id}`}>{fav.title}</Link>
+
+    <FavoriteToggleButton
+      productId={fav.id}
+      initialIsFavorite={true}
+    />
+  </div>
+))}
+
+
+              </div>
             )}
+          </div>
                 <div className="mt-8 space-y-4">
                 <h2 className="text-lg font-semibold">Mes produits</h2>
 

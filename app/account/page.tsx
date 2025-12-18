@@ -2,7 +2,7 @@ import { headers } from "next/headers"
 import { redirect } from "next/navigation"
 import { auth } from "@/lib/auth"
 import AccountClient from "./AccountClient"
-import { getAllCategorie, getProductsByOwnerId } from "@/lib/queries"
+import { getAllCategorie, getProductsByOwnerId, getFavoritesByUser } from "@/lib/queries"
 
 import { db } from "@/lib/db/drizzle"
 import { users } from "@/lib/db/auth-schema"
@@ -12,6 +12,8 @@ export default async function AccountPage() {
   const session = await auth.api.getSession({ headers: await headers() })
   if (!session) 
     redirect("/auth/sign-in")
+
+  const favorites = await getFavoritesByUser(session.user.id)
 
   const [userFromDb] = await db.select()
   .from(users)
@@ -26,7 +28,7 @@ export default async function AccountPage() {
 
   return (
     <main>
-      <AccountClient user={session.user} categories={categories} products={myProducts} />
+      <AccountClient user={session.user} categories={categories} products={myProducts}favorites={favorites}/>
     </main>
   );
 }

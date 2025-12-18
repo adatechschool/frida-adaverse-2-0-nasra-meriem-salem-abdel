@@ -1,7 +1,7 @@
 import {db} from "@/lib/db/drizzle";
-import { categories,products,comments} from "./db/schema"
+import { categories,products,comments, favorites} from "./db/schema"
 import {users} from "./db/auth-schema"
-import { eq, ilike, and,desc } from "drizzle-orm";
+import { eq, ilike, and,desc, sql } from "drizzle-orm";
 
 export const getAllProducts = async () => {
   const ProductDb = await db.select().from(products)
@@ -114,6 +114,90 @@ export const getProductsByOwnerId = async (ownerId: string) => {
     .from(products)
     .innerJoin(categories, eq(products.categoryId, categories.id))
     .where(eq(products.ownerId, ownerId));
+
+  return result;
+};
+
+export const getFavoritesByUser = async (userId: string) => {
+  const result = await db
+    .select({
+      id: products.id,
+      title: products.title,
+      priceCents: products.priceCents,
+      imageUrl: products.imageUrl,
+    })
+    .from(favorites)
+    .innerJoin(products, eq(favorites.productId, products.id))
+    .where(eq(favorites.userId, userId));
+
+  return result;
+};
+
+
+
+export const getAllProductsWithFavorite = async (userId?: string) => {
+  // si pas connecté: aucun favori
+  if (!userId) {
+    const result = await db.select().from(products);
+    return result.map((p) => ({ ...p, isFavorite: false }));
+  }
+
+  const result = await db
+    .select({
+      id: products.id,
+      title: products.title,
+      slug: products.slug,
+      description: products.description,
+      priceCents: products.priceCents,
+      imageUrl: products.imageUrl,
+      isPublished: products.isPublished,
+      ownerId: products.ownerId,
+      categoryId: products.categoryId,
+      createdAt: products.createdAt,
+      updatedAt: products.updatedAt,
+
+      isFavorite: sql<boolean>`(${favorites.userId} is not null)`.as("is_favorite"),
+    })
+    .from(products)
+    .leftJoin(
+      favorites,
+      and(eq(favorites.productId, products.id), eq(favorites.userId, userId))
+    );
+
+  return result;
+};
+
+
+
+export const getPublishedProductsWithFavorite = async (userId?: string) => {
+  // si pas connecté, isFavorite = false partout
+  if (!userId) {
+    const result = await db.select().from(products).where(eq(products.isPublished, true));
+    return result.map((p) => ({ ...p, isFavorite: false }));
+  }
+
+  const result = await db
+    .select({
+      id: products.id,
+      title: products.title,
+      slug: products.slug,
+      description: products.description,
+      priceCents: products.priceCents,
+      imageUrl: products.imageUrl,
+      isPublished: products.isPublished,
+      categoryId: products.categoryId,
+      createdAt: products.createdAt,
+      updatedAt: products.updatedAt,
+
+      // ✅ bool : favori ou non
+      isFavorite: sql<boolean>`(${favorites.userId} is not null)`.as("is_favorite"),
+    })
+    .from(products)
+    .leftJoin(
+      favorites,
+      and(eq(favorites.productId, products.id), eq(favorites.userId, userId))
+    )
+    .where(eq(products.isPublished, true));
 
   return result;
 };

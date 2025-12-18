@@ -105,7 +105,7 @@ export const ProductForm = ({ categories }: { categories: Category[] }) => {
 
               {imageUrl && (
                 <p className="text-xs text-black">
-                  Image ajoutée ✅
+                  Image ajoutée 
                 </p>
               )}
             </div>
