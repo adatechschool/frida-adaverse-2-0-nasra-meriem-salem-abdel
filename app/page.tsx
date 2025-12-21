@@ -1,8 +1,6 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
-import { signout } from "./actions/connect";
-import { Header } from "./components/header";
-import { getAllCategorie, getAllProducts } from "@/lib/queries";
+import { getAllCategorie, getAllProducts, getFavoriteProductId } from "@/lib/queries";
 import { Categories } from "./components/Categories";
 
 
@@ -21,10 +19,15 @@ export default async function Home() {
       image_url: item.imageUrl, 
     }));
     
+    const favId = session?.user?.id
+    ? await getFavoriteProductId(session.user.id) : []
 
   return (
     <main className="mx-auto max-w-6xl px-4 py-8 grid gap-8 md:grid-cols-[220px,1fr]">
-      <Categories categories={allCategories} products={products}></Categories>
+
+      <Categories categories={allCategories} products={products} favId={favId}></Categories>
+
+      
   </main>
   );
 }

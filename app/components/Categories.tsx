@@ -1,29 +1,34 @@
 "use client"
 import Link from "next/link"
 import { CldImage } from "next-cloudinary";
+import FavoriteButton from "./FavoriteButton";
 
 
 type Category = {
-    id: number;
-    name:  string,
-    slug : string,
-    image_url: string  | null ,
+  id: number;
+  name: string;
+  slug: string;
+  description?: string | null;
+  createdAt?: Date | string;
 }
+
 
 type Products = {
     id: number,
     title: string,
     slug: string,
     category_id:number,
-    image_url? : string,
-}
+    image_url: string | null
+  }
 
 type CategoriesProps= {
     categories: Category[]
     products : Products[]
+    favId : number[]
 }
 
-export const Categories =  ({categories, products}:CategoriesProps) => {
+
+export const Categories =  ({categories, products,favId}:CategoriesProps) => {
 
     
     return (
@@ -55,34 +60,43 @@ export const Categories =  ({categories, products}:CategoriesProps) => {
                   {productsForCategory.length > 0 ? (
                     <ul className="grid grid-cols-1 sm:grid-cols-2 gap-4 pl-2">
                       {productsForCategory.map((product) => (
-                        <li key={product.id}>
-                          <Link
-                            href={`/products/${product.id}`}
-                            className="group block overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm transition hover:-translate-y-0.5 hover:shadow-md"
-                          >
-                            <div className="relative h-40 w-full bg-zinc-100">
-                              {product.image_url ? (
-                                <CldImage
-                                  src={product.image_url}
-                                  width="800"
-                                  height="500"
-                                  alt={product.title}
-                                  className="h-full w-full object-cover transition group-hover:scale-[1.02]"
-                                />
-                              ) : (
-                                <div className="h-full w-full" />
-                              )}
-                            </div>
-                            <div className="p-4">
-                              <h3 className="line-clamp-2 text-base font-semibold text-zinc-900">
-                                {product.title}
-                              </h3>
-                              <p className="mt-1 text-sm text-zinc-500">
-                                Voir le produit →
-                              </p>
-                            </div>
-                          </Link>
-                        </li>
+                       <li key={product.id} className="overflow-hidden rounded-2xl border border-zinc-200 bg-white shadow-sm">
+
+                       <Link href={`/products/${product.id}`} className="group block">
+                       
+                         <div className="relative h-40 w-full bg-zinc-100">
+                           {product.image_url ? (
+                             <CldImage
+                               src={product.image_url}
+                               width="800"
+                               height="500"
+                               alt={product.title}
+                               className="h-full w-full object-cover transition group-hover:scale-[1.02]"
+                             />
+                           ) : (
+                             <div className="h-full w-full" />
+                           )}
+                         </div>
+                     
+                         <div className="p-4 pb-2">
+                           <h3 className="line-clamp-2 text-base font-semibold text-zinc-900">
+                             {product.title}
+                           </h3>
+                         </div>
+                       </Link>
+                     
+                       <div className="flex items-center justify-between px-4 pb-4">
+                         <Link href={`/products/${product.id}`} className="text-sm text-zinc-500 hover:text-zinc-700">
+                           Voir le produit →
+                         </Link>
+                     
+                         <FavoriteButton
+                           productId={product.id}
+                           initialIsFavorite={favId.includes(product.id)}
+                         />
+                       </div>
+                     </li>
+                     
                       ))}
                     </ul>
                   ) : (

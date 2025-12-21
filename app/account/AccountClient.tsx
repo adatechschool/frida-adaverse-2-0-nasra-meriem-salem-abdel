@@ -6,18 +6,12 @@ import { updateName } from "../actions/updateName";
 import { updateEmail } from "../actions/updateEmail";
 import { useActionState, useEffect } from "react";
 import { deleteProduct } from "../actions/deleteProduct";
-import FavoriteToggleButton from "../components/FavoriteToggleBtn";
+import ProductCardSlug from "../components/ProductCardSlug";
 
 
 type Category = {
     id:number,
     name: string,
-}
-
-type Favorite= {
-  id: number,
-  title:string,
-  priceCents:number,
 }
 
 type Products = {
@@ -34,7 +28,15 @@ type Products = {
     categoryName: string,
 }
 
-export default function AccountClient({ user,categories, products, favorites}: { user: any , categories: Category[], products:Products[], favorites : Favorite[]}) {
+type FavoriteProduct = {
+  id: number;
+  title: string;
+  priceCents: number;
+  imageUrl: string | null;
+  slug?: string;
+};
+
+export default function AccountClient({ user,categories, products, favorites }: { user: any , categories: Category[], products:Products[], favorites: FavoriteProduct[]}) {
   const [showForm, setShowForm] = useState(false)
   const [showNameForm, setShowNameForm] = useState(false)
   const [showEmail, setShowEmail] = useState(false)
@@ -141,27 +143,30 @@ export default function AccountClient({ user,categories, products, favorites}: {
                 </div>
             </div>
             )}<div className="mt-8 space-y-4">
-            <h2 className="text-lg font-semibold">Mes favoris</h2>
-          
-            {favorites.length === 0 ? (
-              <p className="text-sm text-black">Tu n’as pas encore de favoris.</p>
-            ) : (
-              <div className="grid gap-4 sm:grid-cols-2">
-                {favorites.map((fav) => (
-  <div key={fav.id} className="...">
-    <Link href={`/products/${fav.id}`}>{fav.title}</Link>
-
-    <FavoriteToggleButton
-      productId={fav.id}
-      initialIsFavorite={true}
-    />
-  </div>
-))}
-
 
               </div>
-            )}
-          </div>
+                <div className="mt-10 space-y-4">
+                      <h2 className="text-lg font-semibold">Mes favoris</h2>
+
+                      {favorites.length === 0 ? (
+                        <p className="text-sm text-black">Tu n’as aucun favori pour le moment.</p>
+                      ) : (
+                        <ul className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
+                          {favorites.map((p) => (
+                            <li key={p.id}>
+                              <ProductCardSlug
+                                id={p.id}
+                                title={p.title}
+                                priceCents={p.priceCents}
+                                imageUrl={p.imageUrl}
+                                initialIsFavorite={true}
+                                showFavorite={true}
+                              />
+                            </li>
+                          ))}
+                        </ul>
+                      )}
+                </div>
                 <div className="mt-8 space-y-4">
                 <h2 className="text-lg font-semibold">Mes produits</h2>
 
@@ -196,7 +201,7 @@ export default function AccountClient({ user,categories, products, favorites}: {
                     </div>                    
                     ))
                 )}
-                </div>
+              </div>
     </section>
 
   );

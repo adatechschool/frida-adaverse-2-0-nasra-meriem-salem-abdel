@@ -1,9 +1,10 @@
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers"
-import { getProductsById, getComment} from "@/lib/queries";
+import { getProductsById, getComment, getFavoriteProductId} from "@/lib/queries";
 import  CommentsForm  from "@/app/components/CommentsForm";
 import CommentsProduct from "@/app/components/CommentsProduct";
 import ProductImage from "@/app/components/ProductImage";
+import FavoriteButton from "@/app/components/FavoriteButton";
 
 
 
@@ -24,8 +25,8 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
 
   const productId = Number(id)
 
-  const product = await getProductsById(productId);
-  const comments = await getComment(productId);
+  const product = await getProductsById(productId)
+  const comments = await getComment(productId)
   if (!product) {
     return (
       <h1 className="text-center text-xl font-semibold">AUCUN PRODUIT SORRYYYYYY</h1>
@@ -33,14 +34,21 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
   }
  const session = await auth.api.getSession({
   headers: await headers(),
-});
+  });
 
-const connectedUserId = session?.user?.id ?? null;
-
+  const connectedUserId = session?.user?.id ?? null
+  const favId = connectedUserId ? await getFavoriteProductId(connectedUserId) : []
+  const isFav = favId.includes(productId);
 
   return (
     <main className="mx-auto max-w-3xl px-4 py-10">
-      <h1 className="mb-4 text-2xl font-bold">{product.title}</h1>
+      <div className="mb-4 flex items-center justify-between gap-4">
+        <h1 className="text-2xl font-bold">{product.title}</h1>
+
+        {connectedUserId && (
+          <FavoriteButton productId={productId} initialIsFavorite={isFav} />
+        )}
+      </div>
       {product.imageUrl && (
         <ProductImage publicId={product.imageUrl} alt={product.title} />
       )}
