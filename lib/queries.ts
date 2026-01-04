@@ -148,3 +148,22 @@ export const getFavoriteProductByUserId = async (userId: string) => {
   return result
 }
 
+export const getAllProductsWithSellers = async () => {
+  const result = await db
+    .select({
+      id: products.id,
+      title: products.title,
+      priceCents: products.priceCents,
+      imageUrl: products.imageUrl,
+      createdAt: products.createdAt,
+      sellerName: users.name, // Le nom du vendeur
+      sellerEmail: users.email, // L'email pour l'admin
+      categoryName: categories.name,
+    })
+    .from(products)
+    .innerJoin(users, eq(products.ownerId, users.id))
+    .innerJoin(categories, eq(products.categoryId, categories.id))
+    .orderBy(desc(products.createdAt));
+
+  return result;
+};

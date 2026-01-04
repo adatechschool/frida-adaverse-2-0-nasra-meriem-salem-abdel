@@ -11,7 +11,19 @@ export const auth = betterAuth({
   }),
   
   user: {
-    modelName: "users", 
+    modelName: "users",
+    additionalFields: {
+      role: {
+        type: "string",
+        required: false,
+        defaultValue: "user"
+      },
+      isBanned: {
+        type: "boolean",
+        required: false,
+        defaultValue: false
+      }
+    }
   },
   
   emailAndPassword: {
@@ -27,6 +39,14 @@ export const auth = betterAuth({
             clientSecret: process.env.GOOGLE_CLIENT_SECRET as string, 
         },  
     },
-  
+  callbacks: {
+    session({ session, user }: any) {
+      if (session.user && user) {
+        session.user.role = user.role;
+        session.user.isBanned = user.isBanned;
+      }
+      return session;
+    },
+  },
   plugins: [nextCookies()],
 });

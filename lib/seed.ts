@@ -5,6 +5,7 @@ import { db } from "@/lib/db/drizzle";
 import {  categories, products, comments } from "@/lib/db/schema";
 import { users } from "@/lib/db/auth-schema";
 import { eq } from "drizzle-orm";
+import { role } from "better-auth/client";
 
 // petit helper pour les slugs
 const slugify = (s: string) =>
@@ -23,6 +24,7 @@ async function main() {
       email: "alice@example.com",
       emailVerified: true,
       image: null,
+      role: "admin",
     },
     {
       id: "user_2",
@@ -30,6 +32,7 @@ async function main() {
       email: "bob@example.com",
       emailVerified: true,
       image: null,
+      role: "user",
     },
     {
       id: "user_3",
@@ -37,7 +40,9 @@ async function main() {
       email: "charlie@example.com",
       emailVerified: false,
       image: null,
+      role: "user",
     },
+ 
   ];
 
   await db.insert(users).values(userSeed).onConflictDoNothing();
@@ -194,3 +199,8 @@ main()
     console.error(err);
     process.exit(1);
   });
+
+//   //export const userNeeds = needs.user({
+//   role: true,
+//   isBanned: true,
+// });

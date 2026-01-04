@@ -29,6 +29,14 @@ export const Header = async () => {
             <Link href="/account" className="font-semibold">
               Mon compte
             </Link>
+             {/* {session.user.role === "admin" && (
+              <Link
+                href="/admin"
+                className="font-semibold text-red-500"
+              >
+                Admin
+              </Link>
+            )} */}
 
             <form action={signout} >
               <button className="font-semibold">

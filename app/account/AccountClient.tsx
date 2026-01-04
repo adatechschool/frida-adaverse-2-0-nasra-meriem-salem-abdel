@@ -4,9 +4,11 @@ import { ProductForm } from "@/app/components/ProductForm";
 import Link from "next/link";
 import { updateName } from "../actions/updateName";
 import { updateEmail } from "../actions/updateEmail";
-import { useActionState, useEffect } from "react";
+import { useActionState } from "react";
+import { useEffect } from "react";
 import { deleteProduct } from "../actions/deleteProduct";
 import ProductCardSlug from "../components/ProductCardSlug";
+import { useRouter } from "next/navigation";
 
 
 type Category = {
@@ -36,18 +38,16 @@ type FavoriteProduct = {
   slug?: string;
 };
 
-export default function AccountClient({ user,categories, products, favorites }: { user: any , categories: Category[], products:Products[], favorites: FavoriteProduct[]}) {
+export default function AccountClient({ user, categories, products, favorites }: { user: any, categories: Category[], products: Products[], favorites: FavoriteProduct[] }) {
   const [showForm, setShowForm] = useState(false)
   const [showNameForm, setShowNameForm] = useState(false)
   const [showEmail, setShowEmail] = useState(false)
   const [emailState, emailAction] = useActionState(updateEmail, null)
-  
+  const router = useRouter();
 
   useEffect(() => {
     if (emailState?.ok === true) setShowEmail(false); // ok = boleean
   }, [emailState]);
-  
-
 
   return (
 <section className="mx-auto w-full max-w-lg px-4 py-8 sm:max-w-2xl sm:px-6 sm:py-12 lg:max-w-4xl lg:px-8">
@@ -59,6 +59,22 @@ export default function AccountClient({ user,categories, products, favorites }: 
       Infos de ton profil et gestion de tes produits.
     </p>
   </header>
+
+  {/* Option B : Bandeau de redirection au choix pour l'Admin */}
+  {user?.role?.trim() === "admin" && (
+    <div className="mt-6 flex flex-col items-center justify-between gap-4 rounded-2xl border-2 border-purple-500 bg-purple-50 p-6 shadow-lg sm:flex-row">
+      <div>
+        <h3 className="text-lg font-bold text-purple-900">Mode Administrateur</h3>
+        <p className="text-sm text-purple-700">Vous pouvez accéder à la gestion globale de la boutique.</p>
+      </div>
+      <Link 
+        href="/admin" 
+        className="w-full rounded-xl bg-purple-600 px-6 py-3 text-center text-sm font-bold text-white shadow-md transition-all hover:bg-purple-700 active:scale-95 sm:w-auto"
+      >
+        Aller au Dashboard Admin →
+      </Link>
+    </div>
+  )}
 
   <div className="mt-6 rounded-2xl border border-gray-200 bg-white p-5 shadow-sm sm:mt-8 sm:p-8 lg:p-10">
     <ul className="space-y-4 text-sm sm:text-base">

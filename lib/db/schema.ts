@@ -8,10 +8,17 @@ import {
   serial,
   varchar,
   integer,
-  primaryKey
+  primaryKey,
+  
 } from "drizzle-orm/pg-core";
 
-import {users} from "./auth-schema"
+import { users } from "../db/auth-schema";
+import {eq} from "drizzle-orm";
+import { headers } from "next/headers";
+import { db } from "./drizzle";
+import { auth } from "@/lib/auth";
+
+
 
 
 //
@@ -106,3 +113,8 @@ export const favorites = pgTable("favorites",
     pk: primaryKey({ columns: [table.userId, table.productId] }),
   })
 );
+
+
+
+
+
