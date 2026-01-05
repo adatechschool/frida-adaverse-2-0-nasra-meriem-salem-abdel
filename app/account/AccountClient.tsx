@@ -173,7 +173,7 @@ export default function AccountClient({ user, categories, products, favorites }:
                               <ProductCardSlug
                                 id={p.id}
                                 title={p.title}
-                                priceCents={p.priceCents}
+                                priceCents={p.priceCents / 100}
                                 imageUrl={p.imageUrl}
                                 initialIsFavorite={true}
                                 showFavorite={true}
