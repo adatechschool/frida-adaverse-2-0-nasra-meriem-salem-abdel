@@ -31,7 +31,7 @@ export default async function CategoriesSlug({ params }: PageProps) {
               showFavorite={Boolean(userId)}
               initialIsFavorite={favId.includes(p.id)}
               title={p.title}
-              priceCents={p.priceCents}
+              priceCents={p.priceCents /100}
               imageUrl={p.imageUrl}
             />
           </li>
