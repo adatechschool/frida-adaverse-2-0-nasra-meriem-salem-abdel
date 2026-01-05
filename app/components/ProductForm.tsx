@@ -52,6 +52,8 @@ export const ProductForm = ({ categories }: { categories: Category[] }) => {
               id="priceCents"
               type="number"
               placeholder="13"
+              step="0.01"
+              inputMode="decimal"
               required
               className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-200"
             />

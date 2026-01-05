@@ -17,18 +17,35 @@ function slugify(str: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
+function normalizePrice(value: string): number {
+  return Number(
+    value
+      .replace(/\s/g, "")   
+      .replace(",", ".")  
+  );
+}
+
+
 export const createProduct = async (formData: FormData) => {
   const session = await auth.api.getSession({ headers: await headers() });
   if (!session?.user) redirect("/auth/signin");
 
   const title = (formData.get("title") as string)?.trim();
 
-  const priceCents = Number(formData.get("priceCents"));
+  //const priceCents = Number(formData.get("priceCents"));
+  const rawPrice = formData.get("priceCents") as string;
+  const price = normalizePrice(rawPrice);
+  const priceCents = Math.round(price * 100);
+
+
   const categoryId = Number(formData.get("categoryId"));
 
   const description = (formData.get("description") as string) || null;
   const imageUrl = (formData.get("imageUrl") as string) || null;
   const isPublished = formData.get("isPublished") === "on";
+
+
+
 
   if (!title || !priceCents || !categoryId) {
     throw new Error("Champs requis manquants");

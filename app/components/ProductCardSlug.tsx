@@ -46,7 +46,7 @@ export default function ProductCardSlug({
 
         <div className="mt-3 flex items-center justify-between">
           <p className="text-lg font-bold text-zinc-900">
-            {(priceCents / 100).toFixed(2)} €
+            {(priceCents ).toFixed(2)} €
           </p>
 
           <div className="flex items-center gap-3">
