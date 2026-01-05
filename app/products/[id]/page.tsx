@@ -83,6 +83,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
     </small>
 
     <CommentsProduct
+      productId={product.id}
       commentId={comment.id}
       commentContent={comment.content}
       authorId={comment.authorId}

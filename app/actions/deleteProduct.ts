@@ -24,17 +24,19 @@ export const deleteProduct = async (formData : FormData) => {
       }
     
     
+    
     const deleted = await db
       .delete(products)
       .where(
         and(eq(products.id, productId), eq(products.ownerId, session.user.id))
       )
       .returning({ id: products.id })
-  
+      console.log(deleted)
       if (deleted.length === 0) {
         redirect("/account?error=not_allowed")
       }
-
+    
+  
     
     revalidatePath("/account"); // raffraichit données
     redirect("/account"); // raffraichit

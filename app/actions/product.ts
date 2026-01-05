@@ -17,7 +17,7 @@ function slugify(str: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-function normalizePrice(value: string): number {
+ function normalizePrice(value: string): number {
   return Number(
     value
       .replace(/\s/g, "")   
