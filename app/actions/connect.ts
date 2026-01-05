@@ -1,69 +1,107 @@
 "use server";
+
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
-import { db} from "@/lib/db/drizzle";
-import {eq} from "drizzle-orm";
+import { db } from "@/lib/db/drizzle";
+import { eq } from "drizzle-orm";
 import * as authSchema from "@/lib/db/auth-schema";
+import { z } from "zod";
 
-export const signup = async (formData: FormData) => {
-    const name = formData.get("name") as string;
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    if (!name && !email && !password) {
-        throw Error("Name, email and password are required");
-    }
-    const response = await auth.api.signUpEmail({
-        body: {
-            name,
-            email,
-            password,
-        },
-        headers: await headers(),
-        asResponse: true,
-    });
-    if (!response.ok) {
-        console.error("Sign in failed:", await response.json());
-        redirect("/auth/signup?error=true");
-    }
-    redirect("/"); // on redirige vers la home page une fois connecté
+/* ---------- TYPES ---------- */
+
+export type AuthState = {
+  ok: boolean;
+  error?: string;
+  role?: string;
 };
 
-export const signin = async (formData: FormData) => {
-    const email = formData.get("email") as string;
-    const password = formData.get("password") as string;
-    if (!email && !password) {
-        throw Error("email and password are required");
-    }
-    const user = await db.query.users.findFirst({
-        where: eq(authSchema.users.email,email),
+/* ---------- ZOD ---------- */
+
+const signupSchema = z.object({
+  name: z
+    .string()
+    .min(3, "Le nom doit contenir au moins 3 caractères")
+    .trim(),
+  email: z.string().email("Email invalide").trim(),
+  password: z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+});
+
+/* ---------- SIGNUP ---------- */
+
+export const signup = async (
+  _prev: AuthState | null,
+  formData: FormData
+): Promise<AuthState> => {
+  const raw = {
+    name: formData.get("name"),
+    email: formData.get("email"),
+    password: formData.get("password"),
+  };
+
+  const result = signupSchema.safeParse(raw);
+
+  if (!result.success) {
+    return { ok: false, error: result.error.issues[0].message };
+  }
+
+  const { name, email, password } = result.data;
+
+  try {
+    // IMPORTANT: on enlève asResponse:true pour laisser Better Auth gérer la session
+    await auth.api.signUpEmail({
+      body: { name, email, password },
+      headers: await headers(),
     });
 
-    if (!user) {
-        throw new Error("Invalid credentials");
-    }
-
-    const response = await auth.api.signInEmail({
-        body: {
-            email,
-            password,
-        },
-        headers: await headers(),
-        asResponse: true,
-    });
-    if (!response.ok) {
-        console.error("Sign in failed:", await response.json());
-        redirect("/auth/signin?error=true");
-    } 
-    
-    // Rediriger vers le dashboard admin si l'utilisateur est admin
-    if (user?.role === "admin") {
-        redirect("/admin/dashboard");
-    }
-    
-    redirect("/"); // on redirige vers la home page une fois connecté
+    return { ok: true };
+  } catch (e: any) {
+    return {
+      ok: false,
+      error: e?.message || "Erreur lors de l’inscription",
+    };
+  }
 };
+
+/* ---------- SIGNIN ---------- */
+
+export const signin = async (
+  _prev: AuthState | null,
+  formData: FormData
+): Promise<AuthState> => {
+  const email = (formData.get("email") as string)?.trim();
+  const password = (formData.get("password") as string)?.trim();
+
+  if (!email || !password) {
+    return { ok: false, error: "Email et mot de passe requis." };
+  }
+
+  const user = await db.query.users.findFirst({
+    where: eq(authSchema.users.email, email),
+  });
+
+  if (!user) {
+    return { ok: false, error: "Email ou mot de passe incorrect." };
+  }
+
+  try {
+    // IMPORTANT: on enlève asResponse:true
+    await auth.api.signInEmail({
+      body: { email, password },
+      headers: await headers(),
+    });
+
+    return { ok: true, role: user.role };
+  } catch {
+    return { ok: false, error: "Email ou mot de passe incorrect." };
+  }
+};
+
+/* ---------- SIGNOUT ---------- */
+
 export const signout = async () => {
-    await auth.api.signOut({ headers: await headers() }); // attention à
-};
+  await auth.api.signOut({ headers: await headers() });
 
+  // force rerender serveur du Header après déconnexion
+  redirect("/");
+};
