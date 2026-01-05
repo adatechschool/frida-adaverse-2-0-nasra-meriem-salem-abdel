@@ -204,6 +204,12 @@ export default function AccountClient({ user, categories, products, favorites }:
                             {(product.priceCents / 100).toFixed(2)} €
                           </p>
                         </Link>
+
+                        <div className="ml-auto flex gap-2">
+                        <Link href={`/account/products/${product.id}/edit`}
+                          className="rounded-xl bg-amber-500 px-3 py-2 text-white hover:bg-amber-700"> Modifier
+                        </Link>
+                        </div>
                     
                         <form action={deleteProduct} className="ml-auto">
                           <input type="hidden" name="productId" value={product.id} />
