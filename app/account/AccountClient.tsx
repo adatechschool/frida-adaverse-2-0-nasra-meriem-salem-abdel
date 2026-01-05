@@ -321,42 +321,6 @@ export default function AccountClient({
       {/* MES PRODUITS */}
       <div className="mt-8 space-y-4">
         <h2 className="text-lg font-semibold">Mes produits</h2>
-
-        {products.length === 0 ? (
-          <p className="text-sm text-black">Tu n’as pas encore ajouté de produit.</p>
-        ) : (
-          products.map((product) => (
-            <div
-              key={product.id}
-              className="rounded-2xl border border-gray-200 bg-white p-4 shadow-sm"
-            >
-              <div className="flex items-start gap-3">
-                <Link href={`/products/${product.id}`} className="flex-1">
-                  <p className="text-base font-semibold">{product.title}</p>
-                  {product.description && (
-                    <p className="mt-1 text-sm text-black">
-                      {product.description}
-                    </p>
-                  )}
-                  <p className="mt-2 text-sm font-medium">
-                    {(product.priceCents / 100).toFixed(2)} €
-                  </p>
-                </Link>
-
-                <form action={deleteProduct} className="ml-auto">
-                  <input type="hidden" name="productId" value={product.id} />
-                  <button className="bg-red-500 hover:bg-red-700 cursor-pointer px-3 py-2 rounded-xl text-white">
-                    Supprimer
-                  </button>
-                </form>
-              </div>
-
-              <div className="mt-3 text-xs text-black">
-                Catégorie: {product.categoryName}
-              </div>
-            </div>
-          ))
-        )}
         {products.length === 0 ? (
           <p className="text-sm text-black">Tu n’as pas encore ajouté de produit.</p>
         ) : (
