@@ -57,9 +57,6 @@ export const ProductForm = ({ categories }: { categories: Category[] }) => {
               required
               className="w-full rounded-xl border border-gray-300 px-3 py-2 outline-none focus:border-gray-900 focus:ring-2 focus:ring-gray-200"
             />
-            <p className="text-xs text-black">
-              Astuce : tu stockes en centimes (ex: 1300 pour 13€).
-            </p>
           </div>
   
           <div className="space-y-1">
