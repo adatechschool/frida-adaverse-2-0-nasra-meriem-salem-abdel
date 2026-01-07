@@ -7,6 +7,7 @@
  import {comments} from "@/lib/db/schema"
  import {eq,and} from "drizzle-orm"
  import { revalidatePath } from "next/cache";
+ import { redirect } from "next/navigation";
 
 
 
@@ -14,7 +15,9 @@
     const session = await auth.api.getSession({
      headers: await headers(),
 })
-     if(!session?.user){ throw new Error ("Connecte toi por favor pour commenter ") 
+     if(!session?.user){ 
+      //throw new Error ("Connecte toi por favor pour commenter ") 
+      redirect("/auth/sign-in")
 
      }
     await db 

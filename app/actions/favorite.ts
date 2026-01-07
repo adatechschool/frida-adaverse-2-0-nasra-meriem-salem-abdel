@@ -5,14 +5,16 @@ import { favorites } from "@/lib/db/schema";
 import { and, eq } from "drizzle-orm";
 import { auth } from "@/lib/auth";
 import { headers } from "next/headers";
+import { redirect } from "next/navigation";
 
 export async function toggleFavorite(productId: number) {
   // 1) Récupérer la session (source de vérité)
   const session = await auth.api.getSession({ headers: await headers() });
 
   if (!session?.user?.id) {
-    throw new Error("Unauthorized");
-    // alternative: redirect("/auth/sign-in")
+    /* throw new Error("Unauthorized");
+    // alternative:  */
+    redirect("/auth/sign-in")
   }
 
   const userId = session.user.id;
