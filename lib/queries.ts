@@ -31,6 +31,7 @@ export const getProductsById = async (id: number) => {
       ownerId: products.ownerId,
       sellerName: users.name,
       categoryName: categories.name,
+      categoryId: products.categoryId,   // ✅ AJOUTE ÇA
     })
     .from(products)
     .innerJoin(users, eq(products.ownerId, users.id))         

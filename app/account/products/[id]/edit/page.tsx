@@ -18,6 +18,7 @@ type ProductPageParams = {
     params: Promise<ProductPageParams>;
   }
 
+
 const  EditProductPage = async ({params}: ProductsPageProps) => {
     const session = await auth.api.getSession({
       headers: await headers(),
