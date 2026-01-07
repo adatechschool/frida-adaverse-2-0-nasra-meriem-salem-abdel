@@ -25,7 +25,7 @@ export default function SignInPage() {
 
   useEffect(() => {
     if (state?.ok) {
-      const target = state.role === "admin" ? "/acount" : "/";
+      const target = state.role === "admin" ? "/account" : "/";
       window.location.assign(target);
     }
   }, [state]);
