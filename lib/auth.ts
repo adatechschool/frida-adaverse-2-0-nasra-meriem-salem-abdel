@@ -7,7 +7,6 @@ import {nextCookies} from "better-auth/next-js";
 
 // console.log(process.env.BETTER_AUTH_URL)
 export const auth = betterAuth({
-  baseURL: process.env.BETTER_AUTH_URL, // ✅ AJOUTE ÇA
   database: drizzleAdapter(db, {
     provider: "pg",
    schema: authSchema,
