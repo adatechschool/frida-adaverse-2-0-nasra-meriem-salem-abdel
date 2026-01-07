@@ -57,7 +57,7 @@ export default async function ProductsPage({ params }: ProductsPageProps) {
         {product.description}
       </p>
       <p className="mb-1 text-lg font-semibold">
-        Prix :{product.priceCents / 100}
+        Prix :{product.priceCents / 100} €
       </p>
       <p className="text-lg font-semibold">
         Vendeur : {product.sellerName}
