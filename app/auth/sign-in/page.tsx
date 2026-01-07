@@ -42,7 +42,7 @@ export default function SignInPage() {
               Don&apos;t have an account?{" "}
               <Link
                 href="/auth/sign-up"
-                className="font-medium text-rose-600 hover:text-rose-500"
+                className="font-medium text-rose-600 hover:text-rose-500 cursor-pointer"
               >
                 Sign up
               </Link>
@@ -52,7 +52,7 @@ export default function SignInPage() {
 
         <div className="space-y-6 p-4 py-6 shadow sm:rounded-lg sm:p-6">
           <div className="mx-auto grid grid-cols-2 gap-x-2">
-            <GoogleButton />
+            <GoogleButton/>
             <GithubButton />
           </div>
 
@@ -107,7 +107,7 @@ export default function SignInPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full rounded-lg bg-rose-600 px-4 py-2 font-medium text-white duration-150 hover:bg-rose-500 active:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full cursor-pointer rounded-lg bg-rose-600 px-4 py-2 font-medium text-white duration-150 hover:bg-rose-500 active:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? "Signing in..." : "Sign in"}
             </button>

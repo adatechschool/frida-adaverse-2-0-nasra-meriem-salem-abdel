@@ -15,7 +15,7 @@ export function GoogleButton() {
       type="button"
       aria-label="Continue with Google"
       onClick={onClick}
-      className="hover:bg-secondary active:bg-secondary/40 flex items-center justify-center rounded-lg border py-2.5 duration-150"
+      className="hover:bg-secondary active:bg-secondary/40 flex items-center justify-center rounded-lg border py-2.5 duration-150 cursor-pointer"
     >
       <svg
         className="h-5 w-5"

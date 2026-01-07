@@ -16,7 +16,7 @@ export function GithubButton() {
       type="button"
       onClick={onClick}
       aria-label="Continue with GitHub"
-      className="hover:bg-secondary active:bg-secondary/40 flex items-center justify-center rounded-lg border py-2.5 duration-150"
+      className="hover:bg-secondary active:bg-secondary/40 flex items-center justify-center rounded-lg border py-2.5 duration-150 cursor-pointer"
     >
       <Github size={24} />
     </button>

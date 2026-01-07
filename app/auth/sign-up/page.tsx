@@ -41,7 +41,7 @@ export default function SignUpPage() {
               Already have an account?{" "}
               <Link
                 href="/auth/sign-in"
-                className="font-medium text-rose-600 hover:text-rose-500"
+                className="font-medium text-rose-600 hover:text-rose-500 cursor-pointer"
               >
                 Log in
               </Link>
@@ -116,7 +116,7 @@ export default function SignUpPage() {
             <button
               type="submit"
               disabled={isPending}
-              className="w-full rounded-lg bg-rose-600 px-4 py-2 font-medium text-white duration-150 hover:bg-rose-500 active:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
+              className="w-full rounded-lg cursor-pointer bg-rose-600 px-4 py-2 font-medium text-white duration-150 hover:bg-rose-500 active:bg-rose-600 disabled:cursor-not-allowed disabled:opacity-60"
             >
               {isPending ? "Signing up..." : "Sign up"}
             </button>
